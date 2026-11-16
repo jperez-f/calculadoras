@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calculadora ISR Asalariados 2026 · Socio Tributario GT</title>
+<meta name="description" content="Calcula tu ISR anual y la retención mensual como asalariado en Guatemala, con las reglas 2026 (Decreto 10-2012 y Decreto 13-2026).">
+<style>
+  :root{
+    --ink:#14213d; --ink-2:#3b4a66; --muted:#6b7890;
+    --paper:#f7f5f0; --card:#ffffff; --line:#e3ded3;
+    --brand:#0f5c4d; --brand-2:#137a66; --brand-soft:#e6f1ee;
+    --gold:#b8862b; --gold-soft:#f6eedc; --warn:#9a3b2f; --warn-soft:#fbeeea;
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;background:var(--paper);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1000px;margin:0 auto;padding:28px 20px 36px}
+  header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--brand);font-weight:700}
+  h1{font-family: Georgia, "Times New Roman", serif;font-weight:700;font-size:clamp(26px,4vw,36px);line-height:1.15;margin:6px 0 4px;letter-spacing:-.01em}
+  .sub{color:var(--ink-2);margin:0;max-width:58ch}
+  .badge{background:var(--gold-soft);color:#7a5a1c;border:1px solid #ead9b3;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600;white-space:nowrap}
+
+  .grid{display:grid;grid-template-columns:1.08fr .92fr;gap:20px;align-items:start}
+  @media (max-width:840px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+  .card h2{font-size:15px;margin:0 0 14px}
+  .section + .section{margin-top:18px;padding-top:16px;border-top:1px dashed var(--line)}
+
+  .field{margin-bottom:14px}
+  label{display:block;font-size:14px;font-weight:600;margin-bottom:6px}
+  .hint{display:block;font-weight:400;color:var(--muted);font-size:12.5px;margin-top:2px}
+  .money{position:relative}
+  .money span{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:600;font-size:15px}
+  input[type=text], select{width:100%;font:inherit;font-size:16px;font-variant-numeric:tabular-nums;padding:11px 12px;border:1px solid #d6d0c4;border-radius:10px;background:#fcfbf8;color:var(--ink);transition:border-color .15s, box-shadow .15s, background .15s}
+  .money input{padding-left:30px}
+  input[type=text]:focus, select:focus{outline:none;border-color:var(--brand-2);background:#fff;box-shadow:0 0 0 3px rgba(19,122,102,.15)}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  @media (max-width:520px){.row2,.row3{grid-template-columns:1fr}}
+  .check{display:flex;gap:10px;align-items:flex-start;font-size:14px;cursor:pointer;margin-top:2px}
+  .check input{margin-top:3px;accent-color:var(--brand)}
+  details{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:#fdfcf9}
+  details + details{margin-top:10px}
+  details summary{cursor:pointer;font-weight:600;font-size:14px;color:var(--brand);list-style:none;display:flex;justify-content:space-between;gap:8px}
+  details summary::-webkit-details-marker{display:none}
+  details summary::after{content:"+";font-weight:700}
+  details[open] summary::after{content:"–"}
+  details .inner{margin-top:14px}
+  details .lead{font-size:13px;color:var(--ink-2);margin:0 0 12px}
+
+  .result{position:sticky;top:16px}
+  .hero{background:var(--brand);color:#fff;border-radius:var(--radius);padding:22px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;right:-60px;top:-60px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.06)}
+  .hero .lbl{font-size:13px;opacity:.85}
+  .hero .big{font-family: Georgia, serif;font-size:clamp(34px,6vw,44px);font-weight:700;letter-spacing:-.01em;font-variant-numeric:tabular-nums;line-height:1.1;margin:4px 0 2px}
+  .hero .small{font-size:14px;opacity:.92;font-variant-numeric:tabular-nums}
+  .pill{display:inline-block;margin-top:12px;background:rgba(255,255,255,.14);border-radius:999px;padding:4px 10px;font-size:12.5px}
+
+  table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+  td{padding:7px 0;border-bottom:1px solid #f0ece4;vertical-align:top}
+  td:last-child{text-align:right;white-space:nowrap;padding-left:12px}
+  tr.minus td:last-child{color:var(--warn)}
+  tr.total td{font-weight:700;border-bottom:none;border-top:2px solid var(--ink);padding-top:10px}
+  tr.sub td{color:var(--muted);font-size:13px;border-bottom:none}
+  tr.hide{display:none}
+  .net{margin-top:14px;background:var(--brand-soft);border-radius:10px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .net b{font-size:20px;font-variant-numeric:tabular-nums;color:var(--brand)}
+  .net span{font-size:13.5px;color:var(--ink-2)}
+  .alert{margin-top:12px;border-radius:10px;padding:12px 14px;font-size:13.5px;display:none}
+  .alert.show{display:block}
+  .alert.warn{background:var(--warn-soft);color:#6e2a21;border:1px solid #f0d3cc}
+  .alert.info{background:var(--gold-soft);color:#5f4614;border:1px solid #ead9b3}
+
+  .notes{margin-top:22px;display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media (max-width:840px){.notes{grid-template-columns:1fr}}
+  .notes h3{font-size:14px;margin:0 0 8px}
+  .notes ul{margin:0;padding-left:18px;font-size:13px;color:var(--ink-2)}
+  .notes li{margin-bottom:5px}
+  footer{margin-top:22px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}
+  footer b{color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">Socio Tributario GT · Herramientas</div>
+      <h1>Calculadora de ISR para asalariados</h1>
+      <p class="sub">Proyecta tu impuesto anual y la retención mensual con las reglas vigentes para el período 2026, tal como lo hace tu patrono.</p>
+    </div>
+    <div class="badge">Período fiscal 2026</div>
+  </header>
+
+  <div class="grid">
+    <!-- ENTRADAS -->
+    <div class="card">
+      <div class="section">
+        <h2>Tus ingresos mensuales con este patrono</h2>
+        <div class="row2">
+          <div class="field">
+            <label for="salario">Salario ordinario mensual</label>
+            <div class="money"><span>Q</span><input id="salario" type="text" inputmode="decimal" value="10,000.00"></div>
+          </div>
+          <div class="field">
+            <label for="inicio">Mes de inicio en el año<span class="hint">Si empezaste a trabajar este año</span></label>
+            <select id="inicio"></select>
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label for="bono">Bonificación incentivo<span class="hint">Afecta al ISR, no cotiza al IGSS</span></label>
+            <div class="money"><span>Q</span><input id="bono" type="text" inputmode="decimal" value="250.00"></div>
+          </div>
+          <div class="field">
+            <label for="otros">Otros ingresos afectos<span class="hint">Comisiones, horas extra, viáticos no comprobables</span></label>
+            <div class="money"><span>Q</span><input id="otros" type="text" inputmode="decimal" value="0.00"></div>
+          </div>
+        </div>
+        <label class="check"><input id="igss" type="checkbox" checked> Estoy afiliado al IGSS (cuota laboral 4.83%)</label>
+      </div>
+
+      <div class="section">
+        <details>
+          <summary>Deducciones adicionales</summary>
+          <div class="inner">
+            <div class="field">
+              <label for="iva">IVA en planilla de facturas (Planilla IVA-FEL)<span class="hint">Monto anual, máximo Q12,000</span></label>
+              <div class="money"><span>Q</span><input id="iva" type="text" inputmode="decimal" value="0.00"></div>
+            </div>
+            <div class="field">
+              <label for="prevision">Cuotas al IPM o a Clases Pasivas (mensual)<span class="hint">Para militares y empleados públicos: regímenes de previsión social del Estado</span></label>
+              <div class="money"><span>Q</span><input id="prevision" type="text" inputmode="decimal" value="0.00"></div>
+            </div>
+            <div class="row2">
+              <div class="field">
+                <label for="donaciones">Donaciones anuales<span class="hint">Tope: 5% de la renta bruta</span></label>
+                <div class="money"><span>Q</span><input id="donaciones" type="text" inputmode="decimal" value="0.00"></div>
+              </div>
+              <div class="field">
+                <label for="seguro">Primas de seguro de vida<span class="hint">Pagadas en el año</span></label>
+                <div class="money"><span>Q</span><input id="seguro" type="text" inputmode="decimal" value="0.00"></div>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>Aguinaldo o Bono 14 mayores a un salario</summary>
+          <div class="inner">
+            <p class="lead">Ambos están exentos hasta el 100% de tu salario ordinario mensual. Solo el exceso suma a la renta afecta. Déjalos en cero si recibes lo de ley.</p>
+            <div class="row2">
+              <div class="field">
+                <label for="aguinaldo">Aguinaldo del año</label>
+                <div class="money"><span>Q</span><input id="aguinaldo" type="text" inputmode="decimal" value="0.00"></div>
+              </div>
+              <div class="field">
+                <label for="bono14">Bono 14 del año</label>
+                <div class="money"><span>Q</span><input id="bono14" type="text" inputmode="decimal" value="0.00"></div>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>Otros patronos o patrono anterior este año</summary>
+          <div class="inner">
+            <p class="lead">Si trabajas para más de un patrono, o cambiaste de empleo este año, suma aquí lo de los otros. Con varios patronos debes presentar el formulario SAT-1901 al que te paga el mayor salario.</p>
+            <div class="row3">
+              <div class="field">
+                <label for="o-renta">Ingresos afectos</label>
+                <div class="money"><span>Q</span><input id="o-renta" type="text" inputmode="decimal" value="0.00"></div>
+              </div>
+              <div class="field">
+                <label for="o-igss">IGSS pagado</label>
+                <div class="money"><span>Q</span><input id="o-igss" type="text" inputmode="decimal" value="0.00"></div>
+              </div>
+              <div class="field">
+                <label for="o-isr">ISR retenido</label>
+                <div class="money"><span>Q</span><input id="o-isr" type="text" inputmode="decimal" value="0.00"></div>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>Recalcular a mitad de año</summary>
+          <div class="inner">
+            <p class="lead">Si tu ingreso cambió durante el año, la retención debe ajustarse. Indica lo que este patrono ya te retuvo y el mes desde el que aplicará la nueva retención.</p>
+            <div class="row2">
+              <div class="field">
+                <label for="r-ret">ISR ya retenido por este patrono</label>
+                <div class="money"><span>Q</span><input id="r-ret" type="text" inputmode="decimal" value="0.00"></div>
+              </div>
+              <div class="field">
+                <label for="r-mes">Nueva retención desde</label>
+                <select id="r-mes"></select>
+              </div>
+            </div>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <!-- RESULTADO -->
+    <div class="result">
+      <div class="hero">
+        <div class="lbl" id="r-lbl">Retención mensual estimada</div>
+        <div class="big" id="r-mensual">Q0.00</div>
+        <div class="small">ISR anual proyectado: <span id="r-anual">Q0.00</span></div>
+        <div class="pill" id="r-tasa">Tasa efectiva: 0.00%</div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <h2>Detalle de la proyección anual</h2>
+        <table>
+          <tr><td id="d-bruta-lbl">Ingresos afectos con este patrono</td><td id="d-bruta">Q0.00</td></tr>
+          <tr id="t-exceso" class="hide"><td>Exceso de aguinaldo y Bono 14</td><td id="d-exceso">Q0.00</td></tr>
+          <tr id="t-otro" class="hide"><td>Ingresos de otros patronos</td><td id="d-otro">Q0.00</td></tr>
+          <tr class="minus"><td>Deducción personal sin comprobación</td><td>−Q48,000.00</td></tr>
+          <tr class="minus"><td>Deducción extraordinaria 2026</td><td>−Q3,024.00</td></tr>
+          <tr class="minus"><td>Cuotas IGSS y previsión social</td><td id="d-igss">−Q0.00</td></tr>
+          <tr class="minus"><td>IVA planilla, donaciones y seguros</td><td id="d-otras">−Q0.00</td></tr>
+          <tr class="total"><td>Renta imponible</td><td id="d-imponible">Q0.00</td></tr>
+          <tr class="sub"><td colspan="2" id="d-tramo"></td></tr>
+          <tr id="t-cred" class="hide"><td>ISR retenido por otros patronos</td><td id="d-cred">−Q0.00</td></tr>
+          <tr id="t-ret" class="hide"><td>ISR ya retenido por este patrono</td><td id="d-ret">−Q0.00</td></tr>
+          <tr id="t-saldo" class="hide total"><td>Saldo por retener</td><td id="d-saldo">Q0.00</td></tr>
+        </table>
+        <div class="net">
+          <span>Líquido mensual aprox.<br><small>Ingresos − IGSS − ISR</small></span>
+          <b id="r-liquido">Q0.00</b>
+        </div>
+        <div class="alert warn" id="a-exceso"></div>
+        <div class="alert info" id="a-info"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="card">
+      <h3>Cómo se calcula</h3>
+      <ul>
+        <li>Se proyectan todos los ingresos afectos del año: salario, bonificación incentivo, comisiones, horas extra y viáticos no comprobables, desde el mes de inicio hasta diciembre.</li>
+        <li>No suman el aguinaldo ni el Bono 14 hasta un salario mensual cada uno; el exceso sí está afecto.</li>
+        <li>Se restan Q48,000 sin comprobación, Q3,024 de deducción extraordinaria 2026, cuotas al IGSS, al IPM o a regímenes de previsión del Estado (art. 72, literal c), IVA de la planilla (hasta Q12,000), donaciones (hasta 5% de la renta bruta) y seguros de vida.</li>
+        <li>Tarifa: 5% hasta Q300,000 de renta imponible; sobre el excedente, Q15,000 + 7%.</li>
+        <li>La retención es el impuesto pendiente dividido entre los meses que faltan. Se recalcula cada vez que cambia el ingreso.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Base legal y avisos</h3>
+      <ul>
+        <li>Decreto 10-2012, Ley de Actualización Tributaria, artículos 68 al 82 (rentas del trabajo en relación de dependencia).</li>
+        <li>Acuerdo Gubernativo 213-2013, Reglamento del Libro I, artículos 67 al 73.</li>
+        <li>Decreto 13-2026: deducción extraordinaria de Q3,024 para 2026. Desde 2027 la deducción se vinculará al salario mínimo; esta calculadora se actualizará cuando la SAT publique los valores.</li>
+        <li>Varios patronos: formulario SAT-1901 ante el patrono que paga el mayor salario.</li>
+        <li>Si tu patrono no retuvo o retuvo de menos, declaras y pagas con el formulario SAT-1431. Lo retenido en exceso se devuelve en la liquidación anual del patrono.</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer>
+    <div>Estimación con fines informativos. No sustituye la proyección oficial de tu patrono ni la asesoría profesional.</div>
+    <div>Elaborado por <b>Joel Pérez Flores</b> · Socio Tributario GT</div>
+  </footer>
+</div>
+
+<script>
+(function(){
+  const DED_PERSONAL = 48000, DED_EXTRA = 3024, IGSS_RATE = 0.0483,
+        IVA_MAX = 12000, DON_PCT = 0.05, TRAMO = 300000, FIJO = 15000;
+  const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+  const $ = id => document.getElementById(id);
+  const fmt = n => 'Q' + (Math.round(n*100)/100).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const val = id => { const v = parseFloat(String($(id).value).replace(/[^0-9.]/g,'')); return isFinite(v) && v>0 ? v : 0; };
+  const show = (id, on) => $(id).classList.toggle('hide', !on);
+
+  // Selectores de mes
+  MESES.forEach((m,i) => {
+    $('inicio').add(new Option(m, i+1));
+    $('r-mes').add(new Option(m, i+1));
+  });
+  $('inicio').value = 1; $('r-mes').value = 1;
+
+  function isrDe(imp){ return imp <= TRAMO ? imp * 0.05 : FIJO + (imp - TRAMO) * 0.07; }
+
+  function calc(){
+    const salario = val('salario'), bono = val('bono'), otros = val('otros');
+    const inicio = +$('inicio').value;
+    const meses = 13 - inicio;
+    const afiliado = $('igss').checked;
+
+    const mensualAfecto = salario + bono + otros;
+    const brutaEste = mensualAfecto * meses;
+    const exceso = Math.max(0, val('aguinaldo') - salario) + Math.max(0, val('bono14') - salario);
+    const oRenta = val('o-renta'), oIgss = val('o-igss'), oIsr = val('o-isr');
+    const bruta = brutaEste + exceso + oRenta;
+
+    const igssMensual = afiliado ? (salario + otros) * IGSS_RATE : 0;
+    const prevMensual = val('prevision');
+    const igss = (igssMensual + prevMensual) * meses + oIgss;
+
+    const iva = Math.min(val('iva'), IVA_MAX);
+    const don = Math.min(val('donaciones'), bruta * DON_PCT);
+    const otras = iva + don + val('seguro');
+
+    const imponible = Math.max(0, bruta - DED_PERSONAL - DED_EXTRA - igss - otras);
+    const isr = isrDe(imponible);
+
+    // Retención: saldo pendiente entre los meses que faltan
+    const yaRet = val('r-ret');
+    let desde = Math.max(+$('r-mes').value, inicio);
+    const recalculo = yaRet > 0 || +$('r-mes').value > inicio;
+    if (!recalculo) desde = inicio;
+    const mesesRest = 13 - desde;
+    const saldo = isr - oIsr - yaRet;
+    const mensual = Math.max(0, saldo) / mesesRest;
+
+    // Pintar
+    $('r-lbl').textContent = recalculo ? 'Nueva retención mensual desde ' + MESES[desde-1].toLowerCase() : 'Retención mensual estimada';
+    $('r-mensual').textContent = fmt(mensual);
+    $('r-anual').textContent = fmt(isr);
+    $('r-tasa').textContent = 'Tasa efectiva: ' + (bruta ? (isr / bruta * 100).toFixed(2) : '0.00') + '% de tus ingresos';
+
+    $('d-bruta-lbl').textContent = 'Ingresos afectos con este patrono (' + meses + (meses === 1 ? ' mes)' : ' meses)');
+    $('d-bruta').textContent = fmt(brutaEste);
+    show('t-exceso', exceso > 0); $('d-exceso').textContent = fmt(exceso);
+    show('t-otro', oRenta > 0); $('d-otro').textContent = fmt(oRenta);
+    $('d-igss').textContent = '−' + fmt(igss);
+    $('d-otras').textContent = '−' + fmt(otras);
+    $('d-imponible').textContent = fmt(imponible);
+    $('d-tramo').textContent = imponible === 0 ? 'Sin renta imponible: no pagas ISR este año.'
+      : imponible <= TRAMO ? 'Tramo 1: 5% sobre la renta imponible = ' + fmt(isr)
+      : 'Tramo 2: Q15,000 + 7% sobre ' + fmt(imponible - TRAMO) + ' = ' + fmt(isr);
+
+    show('t-cred', oIsr > 0); $('d-cred').textContent = '−' + fmt(oIsr);
+    show('t-ret', yaRet > 0); $('d-ret').textContent = '−' + fmt(yaRet);
+    show('t-saldo', oIsr > 0 || yaRet > 0); $('d-saldo').textContent = fmt(Math.max(0, saldo));
+
+    $('r-liquido').textContent = fmt(mensualAfecto - igssMensual - prevMensual - mensual);
+
+    const a = $('a-exceso');
+    if (saldo < -0.005) {
+      a.textContent = 'Las retenciones superan el impuesto del año por ' + fmt(-saldo) + '. No se debe retener más; el excedente se devuelve en la liquidación anual del patrono.';
+      a.classList.add('show');
+    } else a.classList.remove('show');
+
+    const info = $('a-info');
+    if (oRenta > 0) {
+      info.textContent = 'Tienes ingresos de otro patrono: presenta el formulario SAT-1901 al patrono que te paga el mayor salario para que la retención considere todos tus ingresos.';
+      info.classList.add('show');
+    } else info.classList.remove('show');
+  }
+
+  document.querySelectorAll('input, select').forEach(el => {
+    el.addEventListener('input', calc);
+    el.addEventListener('change', calc);
+    if (el.type === 'text') {
+      el.addEventListener('blur', () => {
+        const v = parseFloat(el.value.replace(/[^0-9.]/g,''));
+        el.value = isFinite(v) ? v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) : '0.00';
+      });
+      el.addEventListener('focus', () => el.select());
+    }
+  });
+  calc();
+})();
+</script>
+</body>
+</html>
