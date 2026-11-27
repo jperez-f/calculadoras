@@ -4,27 +4,43 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Proyección del ISO y su acreditamiento al ISR · Socio Tributario GT</title>
-<meta name="description" content="Proyecta el Impuesto de Solidaridad (ISO) en Guatemala y compara año por año sus dos formas de acreditamiento al ISR del 25 % (Decreto 73-2008, art. 11). Descarga el resultado en Excel o PDF.">
+<meta name="description" content="Proyecta el Impuesto de Solidaridad (ISO) en Guatemala y compara año por año sus dos formas de acreditamiento al ISR del 25 % (Decreto 73-2008, art. 11). Descarga el resultado en PDF.">
 <meta property="og:title" content="Proyección del ISO: ¿te conviene acreditarlo al ISR o al revés?">
 <meta property="og:description" content="Calculadora gratuita de Socio Tributario GT para comparar las dos formas de acreditamiento del ISO al ISR.">
 <meta property="og:type" content="website">
 <link rel="canonical" href="https://calculadoras.joelantonioperezflores.link/iso-proyeccion.html">
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2710%27 fill=%27%230a2342%27/%3E%3Ctext x=%2732%27 y=%2740%27 text-anchor=%27middle%27 font-family=%27Georgia,serif%27 font-weight=%27700%27 font-size=%2730%27 fill=%27%23fff%27%3EST%3C/text%3E%3Crect x=%2720%27 y=%2746%27 width=%2724%27 height=%273%27 fill=%27%23b08d57%27/%3E%3C/svg%3E">
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <style>
-/* VOICE: herramienta de trabajo tributario, clara y sobria; sigue el estilo del sitio de calculadoras.
-   IDEA: hoja de trabajo del contador: dos columnas, Forma A contra Forma B, año por año.
-   PICTURE: el resultado grande (cuál forma conviene y por cuánto) y la gráfica de desembolsos por año.
-   COLOUR and TYPE: verde de la marca, papel claro, terracota para la Forma A; Georgia + sans del sistema.
-   LAYOUT: título en banda; entradas y resultado lado a lado; gráfica; tablas por forma; base legal al final. */
-:root{color-scheme:light;--bg:#f7f5f0;--panel:#ffffff;--ink:#14213d;--mut:#5b6880;--line:#e3ded3;--band:#0f5c4d;--a:#b0442f;--b:#0f5c4d;--ok:#0f5c4d}
+/* VOICE: herramienta de trabajo tributario, sobria y confiable, con la identidad de Socio Tributario GT.
+   IDEA: hoja de trabajo del contador: Forma A contra Forma B, año por año.
+   PICTURE: el resultado grande y la gráfica de desembolsos por año.
+   COLOUR and TYPE: azul marino #0a2342 y dorado #b08d57 de la marca, papel claro; Cormorant Garamond + Inter.
+   LAYOUT: banda de marca con logo; entradas y resultado lado a lado; tablas; base legal; contacto. */
+:root{color-scheme:light;--bg:#f6f4ef;--panel:#ffffff;--ink:#0a2342;--mut:#55627a;--line:#e4dfd4;--band:#0a2342;--gold:#b08d57;--gold2:#8a6a38;--a:#b08d57;--b:#0a2342}
 *{box-sizing:border-box;min-width:0}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 ui-sans-serif,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;overflow-x:clip}
-h1,h2,h3{font-family:Georgia,"Times New Roman",serif;line-height:1.1;text-wrap:balance;margin:0 0 .4em}
-h1{font-size:clamp(30px,4.4vw,48px);font-weight:800}h2{font-size:24px}h3{font-size:18px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Inter,ui-sans-serif,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:700;line-height:1.1;text-wrap:balance;margin:0 0 .4em}
+h1{font-size:clamp(34px,4.8vw,52px);font-weight:600}h2{font-size:28px}h3{font-size:22px}
 .band{padding:clamp(24px,4vw,56px) max(5vw,16px)}
-.top{background:var(--band);color:#fff}.top a{color:#fff}.top p{color:#d8ebe6;max-width:68ch;margin:.2em 0 0}
+.top{background:var(--band);color:#fff;border-bottom:6px solid var(--gold);position:relative;overflow:hidden}
+.top::after{content:"";position:absolute;right:-120px;top:-60px;width:420px;height:calc(100% + 30px);border:2px solid rgba(255,255,255,.1);border-radius:56px;pointer-events:none}
+.top p{color:#cdd6e4;max-width:68ch;margin:.2em 0 0;position:relative}
+.brandbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:clamp(22px,3vw,36px);position:relative;z-index:1}
+.brand{display:flex;align-items:center;gap:12px;color:#fff;text-decoration:none}
+.logo{width:46px;height:46px;background:#fff;border-radius:7px;display:grid;place-items:center;align-content:center;color:var(--band);font:700 23px/1 "Cormorant Garamond",Georgia,serif}
+.logo i{display:block;width:19px;height:2px;background:var(--gold);margin-top:3px}
+.brand b{font:700 25px "Cormorant Garamond",Georgia,serif}.brand small{font:600 14px Inter,sans-serif;color:#d9bf92;letter-spacing:.04em;margin-left:5px}
+.back{color:#fff;font-size:15px;text-decoration:none;border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:8px 14px}
+.back:hover{border-color:var(--gold)}
+.eyebrow{font:600 13px Inter,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#d9bf92;margin:0 0 8px;position:relative}
+.eyebrow::after{content:"";display:block;width:56px;height:3px;background:var(--gold);margin-top:10px}
+.top h1{position:relative}
+@media(max-width:700px){.top::after{display:none}}
+.verdict,.kpi b{font-variant-numeric:lining-nums}
 .wrap{max-width:1240px;margin:0 auto}
 .grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:20px;align-items:start}
 @media(max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}}
@@ -32,7 +48,8 @@ h1{font-size:clamp(30px,4.4vw,48px);font-weight:800}h2{font-size:24px}h3{font-si
 .presets{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 16px}
 button{font:inherit;font-weight:700;min-height:44px;padding:8px 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
 button[aria-pressed=true]{background:var(--band);color:#fff;border-color:var(--band)}
-button:focus-visible,input:focus-visible{outline:3px solid var(--a);outline-offset:2px}
+button:hover{border-color:var(--gold)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 label{font-size:14px;color:var(--mut);display:block}
 input{font:inherit;font-size:16px;width:100%;min-height:44px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);text-align:right}
 .row2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:14px}
@@ -41,28 +58,34 @@ th,td{padding:8px 8px;border-bottom:1px solid var(--line);text-align:right;white
 th{font-size:13px;color:var(--mut);font-weight:700;white-space:normal;vertical-align:bottom}
 th:first-child,td:first-child{text-align:left}
 .yrs td{padding:4px}.yrs input{min-width:96px}
-.verdict{font-family:Georgia,"Times New Roman",serif;font-size:clamp(26px,3.4vw,38px);font-weight:800;line-height:1.08;margin:.2em 0 .3em;color:var(--a)}
+.verdict{font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(28px,3.6vw,40px);font-weight:700;line-height:1.08;margin:.2em 0 .3em;color:var(--band);padding-left:14px;border-left:4px solid var(--gold)}
 .kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}
 .kpi{border-top:4px solid var(--b);padding-top:8px}.kpi.a{border-color:var(--a)}
-.kpi b{display:block;font:700 clamp(22px,2.6vw,30px)/1.1 Georgia,"Times New Roman",serif;white-space:nowrap}
+.kpi b{display:block;font:700 clamp(26px,3vw,34px)/1.1 "Cormorant Garamond",Georgia,serif;white-space:nowrap}
 .kpi span{font-size:14px;color:var(--mut)}
 .fig{position:relative;min-height:300px;margin-top:8px}.fig>svg{position:absolute;inset:0;width:100%;height:100%}
 .legend{display:flex;gap:18px;flex-wrap:wrap;font-size:14px;color:var(--mut)}.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
 .two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin-top:20px}
 @media(max-width:900px){.two{grid-template-columns:minmax(0,1fr)}}
-.tagA{color:var(--a)}.tagB{color:var(--b)}
+.tagA{color:var(--gold2)}.tagB{color:var(--b)}
 .note{font-size:14px;color:var(--mut)}
 .legal li{margin-bottom:6px}
-.dl{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}.dl button{background:var(--band);color:#fff;border-color:var(--band)}.dl small{flex-basis:100%;color:var(--mut);font-size:13px}
+.dl{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}.dl button{background:var(--gold);color:#fff;border-color:var(--gold)}.dl button:hover{background:var(--gold2)}
+.contact{background:var(--band);color:#fff;border-radius:14px;padding:clamp(20px,3vw,34px);margin-top:20px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:20px;align-items:center;border-bottom:5px solid var(--gold)}
+@media(max-width:800px){.contact{grid-template-columns:minmax(0,1fr)}}
+.contact h2{color:#fff}.contact p{color:#cdd6e4;margin:0}
+.cl{display:grid;gap:10px}.cl a{display:block;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.16);border-radius:10px;padding:12px 16px;color:#fff;text-decoration:none;min-height:44px}.cl a:hover{border-color:var(--gold)}.cl a b{display:block}.cl a span{font-size:14px;color:#cdd6e4}
+footer{padding:22px max(5vw,16px) 34px;font-size:14px;color:var(--mut)}footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}.dl small{flex-basis:100%;color:var(--mut);font-size:13px}
 pre,.scroll{overflow-x:auto}
-a{color:var(--b)}
+a{color:var(--gold2)}
 @media(max-width:600px){table{font-size:13px}.kpis,.row2{grid-template-columns:minmax(0,1fr)}.stack thead{display:none}.stack tr{display:grid;padding-block:10px}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:9em;text-align:end}.stack td::before{content:attr(data-l);float:inline-start;width:8.5em;margin-inline-start:-9em;white-space:normal;text-align:start;color:var(--mut)}.stack td:empty{display:none}.stack td:first-child{font-weight:700;text-align:start;padding-inline-start:0}.stack td:first-child::before{display:none}}
 </style>
 <script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script>
 </head>
 <body>
 <header class="band top"><div class="wrap">
-<p style="margin:0 0 10px"><a href="./">← Todas las calculadoras</a></p>
+<div class="brandbar"><a class="brand" href="https://sociotributario811.wordpress.com/" aria-label="Socio Tributario GT, ir al blog"><span class="logo" aria-hidden="true">ST<i></i></span><span><b>Socio Tributario</b><small>GT</small></span></a><a class="back" href="./">← Todas las calculadoras</a></div>
+<p class="eyebrow">ISO · ISR · Calculadora</p>
 <h1>Proyección del ISO: ¿te conviene acreditarlo al ISR o al revés?</h1>
 <p>Compara año por año las dos formas del artículo 11 de la Ley del Impuesto de Solidaridad para una empresa del Régimen sobre las Utilidades. Acompaña la Parte 4 de la serie de ISR de Socio Tributario GT.</p>
 </div></header>
@@ -96,7 +119,7 @@ a{color:var(--b)}
 </div>
 <div class="legend"><span><i style="background:var(--a)"></i>Forma A</span><span><i style="background:var(--b)"></i>Forma B</span><span>Desembolso de ISO + ISR por año</span></div>
 <div class="fig" id="fig"><svg id="chart" role="img" aria-label="Desembolso anual por forma de acreditamiento"></svg></div>
-<div class="dl"><button type="button" id="bx">Descargar Excel</button><button type="button" id="bp">Descargar PDF</button><small id="dlmsg" aria-live="polite">Incluye tus datos, el resultado y las tablas de las dos formas.</small></div>
+<div class="dl"><button type="button" id="bp">Descargar PDF</button><small id="dlmsg" aria-live="polite">El PDF incluye tus datos, el resultado y las tablas de las dos formas.</small></div>
 </section>
 </div>
 
@@ -117,7 +140,17 @@ a{color:var(--b)}
 <li><strong>Forma A:</strong> el ISO de un año se acredita al ISR de los tres años calendario siguientes. El saldo que vence se trata como gasto deducible en el año en que vence; aquí se muestra su ahorro, el 25 % del monto, restado del ISR de ese año.</li>
 <li><strong>Supuestos:</strong> margen bruto mayor al 4 % (si no, no hay ISO, art. 1), sin exenciones del art. 4 (inicio de actividades, pérdidas en dos años), y sin saldos de ISO de años anteriores a la proyección. Las cifras se redondean a quetzales.</li>
 </ul>
-<p class="note">Herramienta informativa y general, con la normativa vigente a noviembre de 2026. No sustituye la asesoría de un profesional: revisa tu caso con tus números reales y consulta la normativa con la SAT. Hecha para <a href="https://sociotributario811.wordpress.com/">Socio Tributario GT</a>, de Joel Pérez Flores.</p>
+<p class="note">Herramienta informativa y general, con la normativa vigente a noviembre de 2026. No sustituye la asesoría de un profesional: revisa tu caso con tus números reales y consulta la normativa con la SAT. La fila marcada con * usa el activo neto como base del ISO (se resta el IUSI).</p>
+</section>
+
+<section class="contact" aria-labelledby="t-contacto">
+<div><h2 id="t-contacto">¿Revisamos tu caso con tus números?</h2>
+<p>Si quieres saber cuánto ISO te toca, si tu ISR alcanza para acreditarlo o qué forma de acreditamiento te conviene, escríbeme.</p></div>
+<div class="cl">
+<a href="https://forms.cloud.microsoft/r/qkxzHpBA24" target="_blank" rel="noopener"><b>Agenda un diagnóstico fiscal</b><span>30 a 45 minutos sobre IVA, ISR, FEL o régimen, por Q150. Si me contratas en los 30 días siguientes, se acredita a tu primer pago.</span></a>
+<a href="https://www.linkedin.com/in/joelperezflores" target="_blank" rel="noopener"><b>Escríbeme por LinkedIn</b><span>linkedin.com/in/joelperezflores</span></a>
+<a href="https://joelantonioperezflores.link/" target="_blank" rel="noopener"><b>Todos mis enlaces de contacto</b><span>joelantonioperezflores.link</span></a>
+</div>
 </section>
 </div></main>
 
@@ -242,39 +275,48 @@ function rowsOut(c){
 const msg=t=>{$('dlmsg').textContent=t};
 const fname=ext=>`proyeccion-ISO-${st.y0}-${st.y0+N-1}.${ext}`;
 const aviso='Herramienta informativa con la normativa vigente a noviembre de 2026 (Decreto 73-2008 y Decreto 10-2012). No sustituye la asesoría profesional. Socio Tributario GT · Joel Pérez Flores · calculadoras.joelantonioperezflores.link';
-$('bx').addEventListener('click',()=>{
- if(!window.XLSX){msg('No se pudo cargar el generador de Excel. Revisa tu conexión e inténtalo de nuevo.');return}
- const c=lastCalc,o=rowsOut(c),wb=XLSX.utils.book_new();
- const res=[['Proyección del ISO y su acreditamiento al ISR'],[],['Resultado',$('verdict').textContent],['Explicación',$('why').textContent],[],
-  ['','Forma A: ISO acreditado al ISR','Forma B: ISR acreditado al ISO'],['Desembolso total (Q)',Math.round(c.totA),Math.round(c.totB)],
-  ['ISO por acreditar al final (Q)',Math.round(c.pend),0],['ISO no cubierto / que pasa a gasto (Q)',Math.round(c.venc),Math.round(c.noCub)],[],['Aviso',aviso]];
- const add=(rows,name,w)=>{const ws=XLSX.utils.aoa_to_sheet(rows);ws['!cols']=w.map(x=>({wch:x}));XLSX.utils.book_append_sheet(wb,ws,name)};
- add(res,'Resumen',[38,34,34]);add(o.datos,'Datos',[8,20,16,24,16]);add(o.A,'Forma A',[8,14,14,16,14,14,20]);add(o.B,'Forma B',[8,14,14,20,16,14]);
- XLSX.writeFile(wb,fname('xlsx'));msg('Listo: se descargó el archivo de Excel.');
-});
 $('bp').addEventListener('click',()=>{
  if(!window.jspdf){msg('No se pudo cargar el generador de PDF. Revisa tu conexión e inténtalo de nuevo.');return}
  const c=lastCalc,o=rowsOut(c),doc=new window.jspdf.jsPDF({unit:'pt',format:'letter'});
+ const PW=612,PH=792,M=40,TW=PW-2*M;
  const q=v=>typeof v==="number"?fmt(v):String(v);
  const fmtRows=rows=>rows.slice(1).map(r=>r.map((v,j)=>j===0?String(v):q(v)));
- const green=[15,92,77];let y=48;
- doc.setFont('helvetica','bold');doc.setFontSize(16);doc.setTextColor(20,33,61);doc.text('Proyección del ISO y su acreditamiento al ISR',40,y);y+=22;
- doc.setFontSize(12);doc.setTextColor(...green);doc.text(doc.splitTextToSize($('verdict').textContent,530),40,y);y+=doc.splitTextToSize($('verdict').textContent,530).length*15+4;
- doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(59,74,102);const w=doc.splitTextToSize($('why').textContent,530);doc.text(w,40,y);y+=w.length*13+8;
- const tbl=(title,rows)=>{doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(20,33,61);doc.text(title,40,y);
-  doc.autoTable({startY:y+6,head:[rows[0]],body:fmtRows(rows),theme:'grid',styles:{fontSize:8.5,halign:'right'},columnStyles:{0:{halign:'left'}},headStyles:{fillColor:green,halign:'center'},margin:{left:40,right:40}});
-  y=doc.lastAutoTable.finalY+20};
+ const navy=[10,35,66],gold=[176,141,87],mut=[85,98,122];
+ const head=()=>{doc.setFillColor(...navy);doc.rect(0,0,PW,64,'F');doc.setFillColor(...gold);doc.rect(0,64,PW,4,'F');
+  doc.setFillColor(255,255,255);doc.roundedRect(M,16,32,32,4,4,'F');
+  doc.setFont('times','bold');doc.setFontSize(16);doc.setTextColor(...navy);doc.text('ST',M+16,36,{align:'center'});
+  doc.setFillColor(...gold);doc.rect(M+9,40,14,1.5,'F');
+  doc.setFont('times','bold');doc.setFontSize(17);doc.setTextColor(255,255,255);doc.text('Socio Tributario',M+42,37);
+  const w=doc.getTextWidth('Socio Tributario');doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(217,191,146);doc.text('GT',M+46+w,37);
+  doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(205,214,228);doc.text('Calculadoras tributarias · Guatemala',PW-M,37,{align:'right'});};
+ const foot=()=>{const n=doc.getNumberOfPages();for(let i=1;i<=n;i++){doc.setPage(i);doc.setDrawColor(...gold);doc.setLineWidth(1);doc.line(M,PH-46,PW-M,PH-46);
+  doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(...mut);
+  doc.text('Joel Pérez Flores · Perito Contador · linkedin.com/in/joelperezflores · joelantonioperezflores.link',M,PH-32);
+  doc.text('Diagnóstico fiscal de 30 a 45 min por Q150: forms.cloud.microsoft/r/qkxzHpBA24',M,PH-21);
+  doc.text(`Página ${i} de ${n}`,PW-M,PH-21,{align:'right'});}};
+ head();let y=100;
+ doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(...gold);doc.text('PROYECCIÓN DEL ISO Y SU ACREDITAMIENTO AL ISR',M,y);y+=24;
+ doc.setFont('times','bold');doc.setFontSize(19);doc.setTextColor(...navy);const vt=doc.splitTextToSize($('verdict').textContent,TW-12);
+ doc.setFillColor(...gold);doc.rect(M,y-15,3,vt.length*21,'F');doc.text(vt,M+12,y);y+=vt.length*21+6;
+ doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(...mut);const w=doc.splitTextToSize($('why').textContent,TW);doc.text(w,M,y);y+=w.length*13+12;
+ doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(...navy);
+ doc.text(`Forma A: ${fmt(c.totA)} de desembolso; quedan ${fmt(c.pend)} por acreditar`,M,y);y+=14;
+ doc.text(`Forma B: ${fmt(c.totB)} de desembolso; ${fmt(c.noCub)} de ISO no cubierto`,M,y);y+=22;
+ const tbl=(title,rows)=>{if(y>640){doc.addPage();head();y=100}
+  doc.setFont('times','bold');doc.setFontSize(13);doc.setTextColor(...navy);doc.text(title,M,y);
+  doc.autoTable({startY:y+7,head:[rows[0]],body:fmtRows(rows),theme:'grid',styles:{fontSize:8.5,halign:'right',lineColor:[228,223,212],textColor:navy},columnStyles:{0:{halign:'left'}},headStyles:{fillColor:navy,textColor:255,halign:'center'},alternateRowStyles:{fillColor:[246,244,239]},margin:{left:M,right:M,top:90,bottom:60},didDrawPage:d=>{if(d.pageNumber>1)head()}});
+  y=doc.lastAutoTable.finalY+24};
  tbl('Tus datos',[o.datos[0]].concat(o.datos.slice(1).map(r=>[r[0],r[1],r[2]+' %',r[3],r[4]])));
  tbl('Forma A: ISO acreditado al ISR (art. 11, literal a)',o.A);
  tbl('Forma B: ISR acreditado al ISO (art. 11, literal b)',o.B);
- if(y>700){doc.addPage();y=48}
- doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(91,104,128);
- doc.text(doc.splitTextToSize('Supuestos: margen bruto mayor al 4 %, sin exenciones del art. 4, sin saldos de ISO previos, pagos trimestrales iguales; el ISO de un año se acredita al ISR de los tres años siguientes y el remanente vencido se trata como gasto deducible (ahorro del 25 %). '+aviso,530),40,y);
- doc.save(fname('pdf'));msg('Listo: se descargó el PDF.');
+ if(y>660){doc.addPage();head();y=100}
+ doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(...mut);
+ doc.text(doc.splitTextToSize('Supuestos: margen bruto mayor al 4 %, sin exenciones del art. 4, sin saldos de ISO previos, pagos trimestrales iguales; el ISO de un año se acredita al ISR de los tres años siguientes y el remanente vencido se trata como gasto deducible (ahorro del 25 %). Base legal: Decreto 73-2008, arts. 1, 2, 4 y 7 al 11; Decreto 10-2012, arts. 36 y 38. '+aviso,TW),M,y);
+ foot();doc.save(fname('pdf'));msg('Listo: se descargó el PDF.');
 });
 buildInputs(); render();
 }
 </script>
-<p class="note" style="max-width:1240px;margin:0 auto;padding:0 max(5vw,16px) 32px">* En ese año la base del ISO es el activo neto (se resta el IUSI).</p>
+<footer><div class="wrap"><span>Por <b>Joel Pérez Flores</b>, Perito Contador · <a href="https://sociotributario811.wordpress.com/">Blog Socio Tributario GT</a></span><span>Estimaciones informativas; no sustituyen la asesoría profesional.</span></div></footer>
 </body>
 </html>
