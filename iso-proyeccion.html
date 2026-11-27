@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proyección del ISO y su acreditamiento al ISR · Socio Tributario GT</title>
+<meta name="description" content="Proyecta el Impuesto de Solidaridad (ISO) en Guatemala y compara año por año sus dos formas de acreditamiento al ISR del 25 % (Decreto 73-2008, art. 11). Descarga el resultado en Excel o PDF.">
+<meta property="og:title" content="Proyección del ISO: ¿te conviene acreditarlo al ISR o al revés?">
+<meta property="og:description" content="Calculadora gratuita de Socio Tributario GT para comparar las dos formas de acreditamiento del ISO al ISR.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://calculadoras.joelantonioperezflores.link/iso-proyeccion.html">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<style>
+/* VOICE: herramienta de trabajo tributario, clara y sobria; sigue el estilo del sitio de calculadoras.
+   IDEA: hoja de trabajo del contador: dos columnas, Forma A contra Forma B, año por año.
+   PICTURE: el resultado grande (cuál forma conviene y por cuánto) y la gráfica de desembolsos por año.
+   COLOUR and TYPE: verde de la marca, papel claro, terracota para la Forma A; Georgia + sans del sistema.
+   LAYOUT: título en banda; entradas y resultado lado a lado; gráfica; tablas por forma; base legal al final. */
+:root{color-scheme:light;--bg:#f7f5f0;--panel:#ffffff;--ink:#14213d;--mut:#5b6880;--line:#e3ded3;--band:#0f5c4d;--a:#b0442f;--b:#0f5c4d;--ok:#0f5c4d}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 ui-sans-serif,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;line-height:1.1;text-wrap:balance;margin:0 0 .4em}
+h1{font-size:clamp(30px,4.4vw,48px);font-weight:800}h2{font-size:24px}h3{font-size:18px}
+.band{padding:clamp(24px,4vw,56px) max(5vw,16px)}
+.top{background:var(--band);color:#fff}.top a{color:#fff}.top p{color:#d8ebe6;max-width:68ch;margin:.2em 0 0}
+.wrap{max-width:1240px;margin:0 auto}
+.grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:20px;align-items:start}
+@media(max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:clamp(16px,2.4vw,26px)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 16px}
+button{font:inherit;font-weight:700;min-height:44px;padding:8px 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+button[aria-pressed=true]{background:var(--band);color:#fff;border-color:var(--band)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--a);outline-offset:2px}
+label{font-size:14px;color:var(--mut);display:block}
+input{font:inherit;font-size:16px;width:100%;min-height:44px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);text-align:right}
+.row2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:14px}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{padding:8px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th{font-size:13px;color:var(--mut);font-weight:700;white-space:normal;vertical-align:bottom}
+th:first-child,td:first-child{text-align:left}
+.yrs td{padding:4px}.yrs input{min-width:96px}
+.verdict{font-family:Georgia,"Times New Roman",serif;font-size:clamp(26px,3.4vw,38px);font-weight:800;line-height:1.08;margin:.2em 0 .3em;color:var(--a)}
+.kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}
+.kpi{border-top:4px solid var(--b);padding-top:8px}.kpi.a{border-color:var(--a)}
+.kpi b{display:block;font:700 clamp(22px,2.6vw,30px)/1.1 Georgia,"Times New Roman",serif;white-space:nowrap}
+.kpi span{font-size:14px;color:var(--mut)}
+.fig{position:relative;min-height:300px;margin-top:8px}.fig>svg{position:absolute;inset:0;width:100%;height:100%}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:14px;color:var(--mut)}.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin-top:20px}
+@media(max-width:900px){.two{grid-template-columns:minmax(0,1fr)}}
+.tagA{color:var(--a)}.tagB{color:var(--b)}
+.note{font-size:14px;color:var(--mut)}
+.legal li{margin-bottom:6px}
+.dl{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}.dl button{background:var(--band);color:#fff;border-color:var(--band)}.dl small{flex-basis:100%;color:var(--mut);font-size:13px}
+pre,.scroll{overflow-x:auto}
+a{color:var(--b)}
+@media(max-width:600px){table{font-size:13px}.kpis,.row2{grid-template-columns:minmax(0,1fr)}.stack thead{display:none}.stack tr{display:grid;padding-block:10px}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:9em;text-align:end}.stack td::before{content:attr(data-l);float:inline-start;width:8.5em;margin-inline-start:-9em;white-space:normal;text-align:start;color:var(--mut)}.stack td:empty{display:none}.stack td:first-child{font-weight:700;text-align:start;padding-inline-start:0}.stack td:first-child::before{display:none}}
+</style>
+<script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script>
+</head>
+<body>
+<header class="band top"><div class="wrap">
+<p style="margin:0 0 10px"><a href="./">← Todas las calculadoras</a></p>
+<h1>Proyección del ISO: ¿te conviene acreditarlo al ISR o al revés?</h1>
+<p>Compara año por año las dos formas del artículo 11 de la Ley del Impuesto de Solidaridad para una empresa del Régimen sobre las Utilidades. Acompaña la Parte 4 de la serie de ISR de Socio Tributario GT.</p>
+</div></header>
+
+<main class="band"><div class="wrap">
+<div class="grid">
+<section class="panel" aria-labelledby="t-datos">
+<h2 id="t-datos">Tus datos</h2>
+<div class="presets" role="group" aria-label="Escenarios de ejemplo">
+<button type="button" data-p="buena" aria-pressed="false">Año bueno (10 %)</button>
+<button type="button" data-p="floja" aria-pressed="false">Año flojo (2 %)</button>
+<button type="button" data-p="mejora" aria-pressed="false">Margen que mejora</button>
+</div>
+<div class="row2">
+<div><label for="y0">Primer año de la proyección</label><input id="y0" type="number" inputmode="numeric" step="1"></div>
+<div><label for="ing0">Ingresos brutos del año anterior (Q)</label><input id="ing0" type="text" inputmode="decimal"></div>
+</div>
+<div class="scroll"><table class="yrs" aria-describedby="nota-datos">
+<thead><tr><th>Año</th><th>Ingresos brutos del año (Q)</th><th>Margen fiscal (% de ventas)</th><th>Activo neto de apertura (Q)</th><th>IUSI pagado en el año (Q)</th></tr></thead>
+<tbody id="yrs"></tbody></table></div>
+<p class="note" id="nota-datos">Los datos precargados son los del ejemplo del blog: una distribuidora con Q2,400,000 de ventas y Q1,500,000 de activo neto. Cámbialos por tus números; se guardan en este navegador.</p>
+</section>
+
+<section class="panel" aria-labelledby="t-res" aria-live="polite">
+<h2 id="t-res">Resultado</h2>
+<p class="verdict" id="verdict"></p>
+<p id="why"></p>
+<div class="kpis">
+<div class="kpi a"><span>Forma A: ISO acreditado al ISR</span><b id="kA"></b><span id="kA2"></span></div>
+<div class="kpi"><span>Forma B: ISR acreditado al ISO</span><b id="kB"></b><span id="kB2"></span></div>
+</div>
+<div class="legend"><span><i style="background:var(--a)"></i>Forma A</span><span><i style="background:var(--b)"></i>Forma B</span><span>Desembolso de ISO + ISR por año</span></div>
+<div class="fig" id="fig"><svg id="chart" role="img" aria-label="Desembolso anual por forma de acreditamiento"></svg></div>
+<div class="dl"><button type="button" id="bx">Descargar Excel</button><button type="button" id="bp">Descargar PDF</button><small id="dlmsg" aria-live="polite">Incluye tus datos, el resultado y las tablas de las dos formas.</small></div>
+</section>
+</div>
+
+<div class="two">
+<section class="panel"><h3 class="tagA">Forma A: ISO acreditado al ISR (art. 11, literal a)</h3>
+<p class="note">Pagas el ISO cada trimestre y lo descuentas del ISR de los tres años calendario siguientes, el saldo más antiguo primero. Lo que no se logra acreditar en ese plazo pasa a gasto deducible.</p>
+<div class="scroll"><table class="stack"><thead><tr><th>Año</th><th>ISO pagado</th><th>ISR del año</th><th>ISO acreditado</th><th>Pasa a gasto</th><th>Desembolso</th><th>Saldo por acreditar</th></tr></thead><tbody id="tA"></tbody></table></div></section>
+<section class="panel"><h3 class="tagB">Forma B: ISR acreditado al ISO (art. 11, literal b)</h3>
+<p class="note">Tus pagos trimestrales de ISR cubren el ISO del mismo año. Si no alcanzan, pagas la diferencia y no se recupera. Para salir de esta forma necesitas autorización de la SAT.</p>
+<div class="scroll"><table class="stack"><thead><tr><th>Año</th><th>ISO del año</th><th>ISR del año</th><th>ISO cubierto por ISR</th><th>ISO no cubierto</th><th>Desembolso</th></tr></thead><tbody id="tB"></tbody></table></div></section>
+</div>
+
+<section class="panel" style="margin-top:20px"><h3>Cómo calcula y qué supone</h3>
+<ul class="legal">
+<li><strong>Base del ISO:</strong> la mayor entre ¼ del activo neto de apertura y ¼ de los ingresos brutos del año anterior. Si el activo neto supera cuatro veces los ingresos brutos, se usa la base de ingresos (Decreto 73-2008, arts. 2, 7 y 8).</li>
+<li><strong>Tarifa:</strong> 1 % por trimestre. Si la base es el activo neto, se resta el IUSI pagado en el trimestre (art. 9). La herramienta reparte el IUSI anual en cuatro partes iguales.</li>
+<li><strong>ISR:</strong> 25 % de la utilidad fiscal (Decreto 10-2012, art. 36), en cuatro pagos trimestrales iguales (art. 38). La utilidad se calcula como ingresos × margen fiscal.</li>
+<li><strong>Forma A:</strong> el ISO de un año se acredita al ISR de los tres años calendario siguientes. El saldo que vence se trata como gasto deducible en el año en que vence; aquí se muestra su ahorro, el 25 % del monto, restado del ISR de ese año.</li>
+<li><strong>Supuestos:</strong> margen bruto mayor al 4 % (si no, no hay ISO, art. 1), sin exenciones del art. 4 (inicio de actividades, pérdidas en dos años), y sin saldos de ISO de años anteriores a la proyección. Las cifras se redondean a quetzales.</li>
+</ul>
+<p class="note">Herramienta informativa y general, con la normativa vigente a noviembre de 2026. No sustituye la asesoría de un profesional: revisa tu caso con tus números reales y consulta la normativa con la SAT. Hecha para <a href="https://sociotributario811.wordpress.com/">Socio Tributario GT</a>, de Joel Pérez Flores.</p>
+</section>
+</div></main>
+
+<script>
+{
+const N=5, R=0.25;
+const P={
+ buena:{y0:2027,ing0:2400000,rows:Array.from({length:N},()=>({ing:2400000,m:10,an:1500000,iusi:0}))},
+ floja:{y0:2027,ing0:2400000,rows:Array.from({length:N},()=>({ing:2400000,m:2,an:1500000,iusi:0}))},
+ mejora:{y0:2027,ing0:2400000,rows:[2,2,8,10,12].map(m=>({ing:2400000,m,an:1500000,iusi:0}))}
+};
+const $=id=>document.getElementById(id);
+const fmt=n=>'Q'+Math.round(n).toLocaleString('es-GT');
+const num=s=>{const v=parseFloat(String(s).replace(/[^0-9.\-]/g,''));return isFinite(v)?v:0};
+let st=null;
+try{st=JSON.parse(localStorage.getItem('iso-proy'))}catch(e){}
+if(!st||!st.rows||st.rows.length!==N) st=JSON.parse(JSON.stringify(P.floja)), st.preset='floja';
+
+function buildInputs(){
+ $('y0').value=st.y0; $('ing0').value=Math.round(st.ing0).toLocaleString('es-GT');
+ $('yrs').innerHTML=st.rows.map((r,i)=>`<tr><td><b>${st.y0+i}</b></td>
+ <td><input aria-label="Ingresos brutos ${st.y0+i}" data-i="${i}" data-k="ing" inputmode="decimal" value="${Math.round(r.ing).toLocaleString('es-GT')}"></td>
+ <td><input aria-label="Margen fiscal ${st.y0+i}" data-i="${i}" data-k="m" inputmode="decimal" value="${r.m}"></td>
+ <td><input aria-label="Activo neto ${st.y0+i}" data-i="${i}" data-k="an" inputmode="decimal" value="${Math.round(r.an).toLocaleString('es-GT')}"></td>
+ <td><input aria-label="IUSI ${st.y0+i}" data-i="${i}" data-k="iusi" inputmode="decimal" value="${Math.round(r.iusi).toLocaleString('es-GT')}"></td></tr>`).join('');
+ document.querySelectorAll('[data-p]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.p===st.preset));
+}
+
+function calc(){
+ const y=[];
+ for(let i=0;i<N;i++){
+  const r=st.rows[i], prev=i?st.rows[i-1].ing:st.ing0;
+  const bAN=r.an/4, bIng=prev/4;
+  const usaAN= r.an>4*prev ? false : bAN>bIng;
+  const isoQ=Math.max(0,0.01*(usaAN?bAN:bIng)-(usaAN?r.iusi/4:0));
+  const isr=Math.max(0,r.ing*r.m/100*R);
+  y.push({anio:st.y0+i,iso:isoQ*4,isoQ,isr,isrQ:isr/4,usaAN});
+ }
+ // Forma B
+ let totB=0,noCub=0;
+ const B=y.map(o=>{const cub=Math.min(o.isoQ,o.isrQ)*4, nc=o.iso-cub, des=Math.max(o.isoQ,o.isrQ)*4;totB+=des;noCub+=nc;return {...o,cub,nc,des}});
+ // Forma A: lotes por año de origen
+ const lots=[];let totA=0,venc=0;
+ const A=y.map((o,i)=>{
+  let due=o.isr, used=0;
+  for(const l of lots){ if(l.rem>0 && i-l.o>=1 && i-l.o<=3){const u=Math.min(l.rem,due);l.rem-=u;due-=u;used+=u} }
+  let exp=0; for(const l of lots){ if(i-l.o===3 && l.rem>0){exp+=l.rem;l.rem=0} }
+  const ahorro=Math.min(due,exp*R); due-=ahorro; venc+=exp;
+  lots.push({o:i,rem:o.iso});
+  const des=o.iso+due; totA+=des;
+  const saldo=lots.reduce((s,l)=>s+l.rem,0);
+  return {...o,used,exp,ahorro,des,saldo};
+ });
+ return {y,A,B,totA,totB,pend:A[N-1].saldo,noCub,venc};
+}
+
+function render(){
+ const c=calc(), last=st.y0+N-1;
+ const cubre=c.y.every(o=>o.isrQ>=o.isoQ);
+ const d=c.totA-c.totB;
+ let v,w;
+ if(cubre){
+  v=`Te conviene la forma B: evitas adelantar ${fmt(d)}`;
+  w=`Tu ISR cubre el ISO todos los años, así que el costo final es el mismo con las dos formas. La diferencia es de flujo: con la forma A desembolsas el ISO y lo recuperas después; al final de ${last} todavía tendrías ${fmt(c.pend)} por acreditar.`;
+ }else if(Math.abs(d)<1){
+  v=`Te conviene la forma A: mismo desembolso y ${fmt(c.pend)} a tu favor`;
+  w=`Las dos formas te cuestan lo mismo en efectivo hasta ${last}, pero la forma A te deja ISO por acreditar que la B pierde.`;
+ }else if(d<0){
+  v=`Te conviene la forma A: desembolsas ${fmt(-d)} menos`;
+  w=`Con tus márgenes, la forma A aprovecha el ISO que la forma B no lograría acreditar. Al final de ${last} todavía tendrías ${fmt(c.pend)} por acreditar.`;
+ }else{
+  v=`La forma B desembolsa ${fmt(d)} menos hasta ${last}`;
+  w=`Pero la forma A te deja ${fmt(c.pend)} de ISO por acreditar, que solo recuperas si tu ISR sube en los tres años siguientes; lo que no, pasa a gasto deducible. Con la forma B, los ${fmt(c.noCub)} de ISO no cubierto son costo definitivo. Proyecta tu margen antes de elegir.`;
+ }
+ $('verdict').textContent=v; $('why').textContent=w;
+ $('kA').textContent=fmt(c.totA); $('kA2').textContent=`desembolso ${st.y0}–${last}; quedan ${fmt(c.pend)} por acreditar`;
+ $('kB').textContent=fmt(c.totB); $('kB2').textContent=`desembolso ${st.y0}–${last}; ${fmt(c.noCub)} de ISO no cubierto`;
+ $('tA').innerHTML=c.A.map(o=>`<tr><td>${o.anio}${o.usaAN?' *':''}</td><td>${fmt(o.iso)}</td><td>${fmt(o.isr)}</td><td>${fmt(o.used)}</td><td>${fmt(o.exp)}</td><td><b>${fmt(o.des)}</b></td><td>${fmt(o.saldo)}</td></tr>`).join('')
+  +`<tr><td><b>Total</b></td><td></td><td></td><td></td><td>${fmt(c.venc)}</td><td><b>${fmt(c.totA)}</b></td><td>${fmt(c.pend)}</td></tr>`;
+ $('tB').innerHTML=c.B.map(o=>`<tr><td>${o.anio}${o.usaAN?' *':''}</td><td>${fmt(o.iso)}</td><td>${fmt(o.isr)}</td><td>${fmt(o.cub)}</td><td>${fmt(o.nc)}</td><td><b>${fmt(o.des)}</b></td></tr>`).join('')
+  +`<tr><td><b>Total</b></td><td></td><td></td><td></td><td>${fmt(c.noCub)}</td><td><b>${fmt(c.totB)}</b></td></tr>`;
+ lastCalc=c; draw();
+ try{localStorage.setItem('iso-proy',JSON.stringify(st))}catch(e){}
+}
+
+let lastCalc=null;
+const s=$('chart');
+function draw(){
+ if(!lastCalc) return;
+ const W=s.clientWidth,H=s.clientHeight; if(!W||!H) return;
+ const narrow=W<520, pl=narrow?8:62, pb=28, pt=10, pr=8;
+ const max=Math.max(1,...lastCalc.A.map(o=>o.des),...lastCalc.B.map(o=>o.des))*1.1;
+ const gw=(W-pl-pr)/N, bw=Math.min(36,gw*0.32), ih=H-pt-pb;
+ const yv=v=>pt+ih-(v/max)*ih;
+ let g='';
+ if(!narrow){for(let k=0;k<=4;k++){const v=max/1.1*k/4,yy=yv(v);g+=`<line x1="${pl}" x2="${W-pr}" y1="${yy}" y2="${yy}" stroke="var(--line)"/><text x="${pl-8}" y="${yy+4}" text-anchor="end" font-size="12" fill="var(--mut)">${v>=1000?Math.round(v/1000)+'k':Math.round(v)}</text>`}}
+ lastCalc.A.forEach((o,i)=>{
+  const cx=pl+gw*i+gw/2, b=lastCalc.B[i];
+  g+=`<rect x="${cx-bw-2}" y="${yv(o.des)}" width="${bw}" height="${pt+ih-yv(o.des)}" rx="3" fill="var(--a)"><title>${o.anio} forma A: ${fmt(o.des)}</title></rect>`;
+  g+=`<rect x="${cx+2}" y="${yv(b.des)}" width="${bw}" height="${pt+ih-yv(b.des)}" rx="3" fill="var(--b)"><title>${o.anio} forma B: ${fmt(b.des)}</title></rect>`;
+  g+=`<text x="${cx}" y="${H-8}" text-anchor="middle" font-size="13" fill="var(--mut)">${narrow?String(o.anio).slice(2):o.anio}</text>`;
+ });
+ s.innerHTML=g;
+}
+const ro=new ResizeObserver(draw); ro.observe(s);
+
+document.querySelectorAll('[data-p]').forEach(b=>b.addEventListener('click',()=>{st=JSON.parse(JSON.stringify(P[b.dataset.p]));st.preset=b.dataset.p;buildInputs();render()}));
+$('y0').addEventListener('change',e=>{st.y0=Math.round(num(e.target.value))||2027;st.preset=null;buildInputs();render()});
+$('ing0').addEventListener('input',e=>{st.ing0=num(e.target.value);st.preset=null;document.querySelectorAll('[data-p]').forEach(x=>x.setAttribute('aria-pressed','false'));render()});
+$('yrs').addEventListener('input',e=>{const t=e.target;if(!t.dataset.k)return;st.rows[+t.dataset.i][t.dataset.k]=num(t.value);st.preset=null;document.querySelectorAll('[data-p]').forEach(x=>x.setAttribute('aria-pressed','false'));render()});
+function rowsOut(c){
+ const datos=[['Año','Ingresos brutos (Q)','Margen fiscal (%)','Activo neto de apertura (Q)','IUSI pagado (Q)']]
+  .concat(st.rows.map((r,i)=>[st.y0+i,Math.round(r.ing),r.m,Math.round(r.an),Math.round(r.iusi)]));
+ const A=[['Año','ISO pagado','ISR del año','ISO acreditado','Pasa a gasto','Desembolso','Saldo por acreditar']]
+  .concat(c.A.map(o=>[o.anio,o.iso,o.isr,o.used,o.exp,o.des,o.saldo].map(Math.round)))
+  .concat([['Total','','','',Math.round(c.venc),Math.round(c.totA),Math.round(c.pend)]]);
+ const B=[['Año','ISO del año','ISR del año','ISO cubierto por ISR','ISO no cubierto','Desembolso']]
+  .concat(c.B.map(o=>[o.anio,o.iso,o.isr,o.cub,o.nc,o.des].map(Math.round)))
+  .concat([['Total','','','',Math.round(c.noCub),Math.round(c.totB)]]);
+ return {datos,A,B};
+}
+const msg=t=>{$('dlmsg').textContent=t};
+const fname=ext=>`proyeccion-ISO-${st.y0}-${st.y0+N-1}.${ext}`;
+const aviso='Herramienta informativa con la normativa vigente a noviembre de 2026 (Decreto 73-2008 y Decreto 10-2012). No sustituye la asesoría profesional. Socio Tributario GT · Joel Pérez Flores · calculadoras.joelantonioperezflores.link';
+$('bx').addEventListener('click',()=>{
+ if(!window.XLSX){msg('No se pudo cargar el generador de Excel. Revisa tu conexión e inténtalo de nuevo.');return}
+ const c=lastCalc,o=rowsOut(c),wb=XLSX.utils.book_new();
+ const res=[['Proyección del ISO y su acreditamiento al ISR'],[],['Resultado',$('verdict').textContent],['Explicación',$('why').textContent],[],
+  ['','Forma A: ISO acreditado al ISR','Forma B: ISR acreditado al ISO'],['Desembolso total (Q)',Math.round(c.totA),Math.round(c.totB)],
+  ['ISO por acreditar al final (Q)',Math.round(c.pend),0],['ISO no cubierto / que pasa a gasto (Q)',Math.round(c.venc),Math.round(c.noCub)],[],['Aviso',aviso]];
+ const add=(rows,name,w)=>{const ws=XLSX.utils.aoa_to_sheet(rows);ws['!cols']=w.map(x=>({wch:x}));XLSX.utils.book_append_sheet(wb,ws,name)};
+ add(res,'Resumen',[38,34,34]);add(o.datos,'Datos',[8,20,16,24,16]);add(o.A,'Forma A',[8,14,14,16,14,14,20]);add(o.B,'Forma B',[8,14,14,20,16,14]);
+ XLSX.writeFile(wb,fname('xlsx'));msg('Listo: se descargó el archivo de Excel.');
+});
+$('bp').addEventListener('click',()=>{
+ if(!window.jspdf){msg('No se pudo cargar el generador de PDF. Revisa tu conexión e inténtalo de nuevo.');return}
+ const c=lastCalc,o=rowsOut(c),doc=new window.jspdf.jsPDF({unit:'pt',format:'letter'});
+ const q=v=>typeof v==="number"?fmt(v):String(v);
+ const fmtRows=rows=>rows.slice(1).map(r=>r.map((v,j)=>j===0?String(v):q(v)));
+ const green=[15,92,77];let y=48;
+ doc.setFont('helvetica','bold');doc.setFontSize(16);doc.setTextColor(20,33,61);doc.text('Proyección del ISO y su acreditamiento al ISR',40,y);y+=22;
+ doc.setFontSize(12);doc.setTextColor(...green);doc.text(doc.splitTextToSize($('verdict').textContent,530),40,y);y+=doc.splitTextToSize($('verdict').textContent,530).length*15+4;
+ doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(59,74,102);const w=doc.splitTextToSize($('why').textContent,530);doc.text(w,40,y);y+=w.length*13+8;
+ const tbl=(title,rows)=>{doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(20,33,61);doc.text(title,40,y);
+  doc.autoTable({startY:y+6,head:[rows[0]],body:fmtRows(rows),theme:'grid',styles:{fontSize:8.5,halign:'right'},columnStyles:{0:{halign:'left'}},headStyles:{fillColor:green,halign:'center'},margin:{left:40,right:40}});
+  y=doc.lastAutoTable.finalY+20};
+ tbl('Tus datos',[o.datos[0]].concat(o.datos.slice(1).map(r=>[r[0],r[1],r[2]+' %',r[3],r[4]])));
+ tbl('Forma A: ISO acreditado al ISR (art. 11, literal a)',o.A);
+ tbl('Forma B: ISR acreditado al ISO (art. 11, literal b)',o.B);
+ if(y>700){doc.addPage();y=48}
+ doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(91,104,128);
+ doc.text(doc.splitTextToSize('Supuestos: margen bruto mayor al 4 %, sin exenciones del art. 4, sin saldos de ISO previos, pagos trimestrales iguales; el ISO de un año se acredita al ISR de los tres años siguientes y el remanente vencido se trata como gasto deducible (ahorro del 25 %). '+aviso,530),40,y);
+ doc.save(fname('pdf'));msg('Listo: se descargó el PDF.');
+});
+buildInputs(); render();
+}
+</script>
+<p class="note" style="max-width:1240px;margin:0 auto;padding:0 max(5vw,16px) 32px">* En ese año la base del ISO es el activo neto (se resta el IUSI).</p>
+</body>
+</html>
