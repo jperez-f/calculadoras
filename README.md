@@ -5,6 +5,7 @@ Calculadoras gratuitas para estimar impuestos en Guatemala, publicadas con GitHu
 | Calculadora | Archivo | Base legal |
 |---|---|---|
 | ISR de asalariados (período 2026) | `isr-asalariados.html` | Decreto 10-2012, arts. 68 al 82; Acuerdo Gubernativo 213-2013; Decreto 13-2026 |
+| Proyección del ISO y su acreditamiento al ISR | `iso-proyeccion.html` | Decreto 73-2008, arts. 1, 2, 4, 7 al 11; Decreto 10-2012, arts. 36 y 38 |
 
 Autor: Joel Pérez Flores — [Blog Socio Tributario GT](https://sociotributario811.wordpress.com/)
 
