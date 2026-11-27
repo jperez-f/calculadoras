@@ -294,23 +294,22 @@ $('bp').addEventListener('click',()=>{
   doc.text('Joel Pérez Flores · Perito Contador · linkedin.com/in/joelperezflores · joelantonioperezflores.link',M,PH-32);
   doc.text('Diagnóstico fiscal de 30 a 45 min por Q150: forms.cloud.microsoft/r/qkxzHpBA24',M,PH-21);
   doc.text(`Página ${i} de ${n}`,PW-M,PH-21,{align:'right'});}};
- head();let y=100;
- doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(...gold);doc.text('PROYECCIÓN DEL ISO Y SU ACREDITAMIENTO AL ISR',M,y);y+=24;
- doc.setFont('times','bold');doc.setFontSize(19);doc.setTextColor(...navy);const vt=doc.splitTextToSize($('verdict').textContent,TW-12);
- doc.setFillColor(...gold);doc.rect(M,y-15,3,vt.length*21,'F');doc.text(vt,M+12,y);y+=vt.length*21+6;
- doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(...mut);const w=doc.splitTextToSize($('why').textContent,TW);doc.text(w,M,y);y+=w.length*13+12;
- doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(...navy);
- doc.text(`Forma A: ${fmt(c.totA)} de desembolso; quedan ${fmt(c.pend)} por acreditar`,M,y);y+=14;
- doc.text(`Forma B: ${fmt(c.totB)} de desembolso; ${fmt(c.noCub)} de ISO no cubierto`,M,y);y+=22;
- const tbl=(title,rows)=>{if(y>640){doc.addPage();head();y=100}
-  doc.setFont('times','bold');doc.setFontSize(13);doc.setTextColor(...navy);doc.text(title,M,y);
-  doc.autoTable({startY:y+7,head:[rows[0]],body:fmtRows(rows),theme:'grid',styles:{fontSize:8.5,halign:'right',lineColor:[228,223,212],textColor:navy},columnStyles:{0:{halign:'left'}},headStyles:{fillColor:navy,textColor:255,halign:'center'},alternateRowStyles:{fillColor:[246,244,239]},margin:{left:M,right:M,top:90,bottom:60},didDrawPage:d=>{if(d.pageNumber>1)head()}});
-  y=doc.lastAutoTable.finalY+24};
+ head();let y=90;
+ doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(...gold);doc.text('PROYECCIÓN DEL ISO Y SU ACREDITAMIENTO AL ISR',M,y);y+=20;
+ doc.setFont('times','bold');doc.setFontSize(16);doc.setTextColor(...navy);const vt=doc.splitTextToSize($('verdict').textContent,TW-12);
+ doc.setFillColor(...gold);doc.rect(M,y-12,3,vt.length*18,'F');doc.text(vt,M+12,y);y+=vt.length*18+4;
+ doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(...mut);const w=doc.splitTextToSize($('why').textContent,TW);doc.text(w,M,y);y+=w.length*10.5+8;
+ doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(...navy);
+ doc.text(`Forma A: ${fmt(c.totA)} de desembolso; quedan ${fmt(c.pend)} por acreditar`,M,y);y+=11;
+ doc.text(`Forma B: ${fmt(c.totB)} de desembolso; ${fmt(c.noCub)} de ISO no cubierto`,M,y);y+=18;
+ const tbl=(title,rows)=>{
+  doc.setFont('times','bold');doc.setFontSize(11);doc.setTextColor(...navy);doc.text(title,M,y);
+  doc.autoTable({startY:y+5,head:[rows[0]],body:fmtRows(rows),theme:'grid',pageBreak:'avoid',rowPageBreak:'avoid',styles:{fontSize:8,cellPadding:3.2,halign:'right',lineColor:[228,223,212],textColor:navy},columnStyles:{0:{halign:'left'}},headStyles:{fillColor:navy,textColor:255,halign:'center'},alternateRowStyles:{fillColor:[246,244,239]},margin:{left:M,right:M,top:80,bottom:52}});
+  y=doc.lastAutoTable.finalY+16};
  tbl('Tus datos',[o.datos[0]].concat(o.datos.slice(1).map(r=>[r[0],r[1],r[2]+' %',r[3],r[4]])));
  tbl('Forma A: ISO acreditado al ISR (art. 11, literal a)',o.A);
  tbl('Forma B: ISR acreditado al ISO (art. 11, literal b)',o.B);
- if(y>660){doc.addPage();head();y=100}
- doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(...mut);
+ doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(...mut);
  doc.text(doc.splitTextToSize('Supuestos: margen bruto mayor al 4 %, sin exenciones del art. 4, sin saldos de ISO previos, pagos trimestrales iguales; el ISO de un año se acredita al ISR de los tres años siguientes y el remanente vencido se trata como gasto deducible (ahorro del 25 %). Base legal: Decreto 73-2008, arts. 1, 2, 4 y 7 al 11; Decreto 10-2012, arts. 36 y 38. '+aviso,TW),M,y);
  foot();doc.save(fname('pdf'));msg('Listo: se descargó el PDF.');
 });
